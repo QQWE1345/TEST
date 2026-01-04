@@ -18,57 +18,57 @@ end for
 // 批量读取 Modbus 寄存器
 // 从 3x149 开始读取 13 个字（3x149 ~ 3x161）
 // 注意：3x149 对应地址 148（Modbus 地址从 0 开始）
-// 参数：设备名，地址类型，起始地址，数量，缓冲区数组
-result = GetData(buf[0], "Modbus网关45", ReadHoldingReg, 148, 13)
+// 参数：缓冲区，设备名，地址类型，起始地址，数量
+result = GetData(buf, "Modbus网关45", ReadHoldingReg, 148, 13)
 
 if result == 1 then
   // 读取成功，开始处理数据
   
   // 3x149 → LB60
   if buf[0] > 0 then
-    SetData(1, "Local HMI", LB, 60, 1)
+    SetData(1, "local", LB, 60, 1)
   else
-    SetData(0, "Local HMI", LB, 60, 1)
+    SetData(0, "local", LB, 60, 1)
   end if
   
   // 3x152 → LB61 (buf[3])
   if buf[3] > 0 then
-    SetData(1, "Local HMI", LB, 61, 1)
+    SetData(1, "local", LB, 61, 1)
   else
-    SetData(0, "Local HMI", LB, 61, 1)
+    SetData(0, "local", LB, 61, 1)
   end if
   
   // 3x155 → LB62 (buf[6])
   if buf[6] > 0 then
-    SetData(1, "Local HMI", LB, 62, 1)
+    SetData(1, "local", LB, 62, 1)
   else
-    SetData(0, "Local HMI", LB, 62, 1)
+    SetData(0, "local", LB, 62, 1)
   end if
   
   // 3x158 → LB63 (buf[9])
   if buf[9] > 0 then
-    SetData(1, "Local HMI", LB, 63, 1)
+    SetData(1, "local", LB, 63, 1)
   else
-    SetData(0, "Local HMI", LB, 63, 1)
+    SetData(0, "local", LB, 63, 1)
   end if
   
   // 3x161 → LB64 (buf[12])
   if buf[12] > 0 then
-    SetData(1, "Local HMI", LB, 64, 1)
+    SetData(1, "local", LB, 64, 1)
   else
-    SetData(0, "Local HMI", LB, 64, 1)
+    SetData(0, "local", LB, 64, 1)
   end if
   
 else
   // 读取失败，清零所有位（可选，根据需求调整）
-  SetData(0, "Local HMI", LB, 60, 1)
-  SetData(0, "Local HMI", LB, 61, 1)
-  SetData(0, "Local HMI", LB, 62, 1)
-  SetData(0, "Local HMI", LB, 63, 1)
-  SetData(0, "Local HMI", LB, 64, 1)
+  SetData(0, "local", LB, 60, 1)
+  SetData(0, "local", LB, 61, 1)
+  SetData(0, "local", LB, 62, 1)
+  SetData(0, "local", LB, 63, 1)
+  SetData(0, "local", LB, 64, 1)
 end if
 
 // LB65 固定清零
-SetData(0, "Local HMI", LB, 65, 1)
+SetData(0, "local", LB, 65, 1)
 
 end macro_command

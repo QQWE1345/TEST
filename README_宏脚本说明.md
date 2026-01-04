@@ -26,15 +26,19 @@ short result       // 单个变量
 
 ### 3. **GetData 批量读取语法**
 ```
-result = GetData(buf[0], "Modbus网关45", ReadHoldingReg, 148, 13)
+result = GetData(buf, "Modbus网关45", ReadHoldingReg, 148, 13)
 ```
 
 **参数说明：**
-- `buf[0]`：缓冲区起始位置（存放读取的数据）
+- `buf`：缓冲区数组名称（**注意：传递数组名，不是 buf[0]**）
 - `"Modbus网关45"`：设备名称（必须与通讯设备列表中的名称完全一致）
 - `ReadHoldingReg`：寄存器类型（3x 对应 Holding Register）
 - `148`：起始地址（3x149 = 地址 148，因为 Modbus 从 0 开始）
 - `13`：读取数量（从 3x149 到 3x161 共 13 个寄存器）
+
+**常见错误：**
+❌ `GetData(buf[0], ...)` - 错误！会导致 error C38
+✅ `GetData(buf, ...)` - 正确！传递数组名称
 
 **返回值：**
 - `1`：读取成功
@@ -42,15 +46,20 @@ result = GetData(buf[0], "Modbus网关45", ReadHoldingReg, 148, 13)
 
 ### 4. **SetData 写入本地位语法**
 ```
-SetData(1, "Local HMI", LB, 60, 1)
+SetData(1, "local", LB, 60, 1)
 ```
 
 **参数说明：**
 - `1`：要写入的值（1 = ON，0 = OFF）
-- `"Local HMI"`：设备名称（本地 HMI 固定写法）
+- `"local"`：设备名称（本地位固定使用 **"local"** 小写）
 - `LB`：地址类型（Local Bit - 本地位）
 - `60`：地址编号（LB60）
 - `1`：数量（写入 1 个位）
+
+**常见错误：**
+❌ `SetData(1, "Local HMI", ...)` - 错误！会导致 error C45
+❌ `SetData(1, "LOCAL", ...)` - 错误！大小写敏感
+✅ `SetData(1, "local", ...)` - 正确！必须小写
 
 ### 5. **if-then-else 结构**
 ```
@@ -108,6 +117,38 @@ end if
 ---
 
 ## 🐛 常见错误与排查方法
+
+### ⚠️ 错误 C38：不支持设置缓冲方式
+**错误原因：**
+GetData 的第一个参数使用了 `buf[0]` 而不是 `buf`
+
+**错误代码：**
+```
+result = GetData(buf[0], "Modbus网关45", ReadHoldingReg, 148, 13)  // ❌
+```
+
+**正确写法：**
+```
+result = GetData(buf, "Modbus网关45", ReadHoldingReg, 148, 13)  // ✅
+```
+
+---
+
+### ⚠️ 错误 C45：必需选择正确的设备类型
+**错误原因：**
+SetData 的设备名称使用了 `"Local HMI"` 而不是 `"local"`
+
+**错误代码：**
+```
+SetData(1, "Local HMI", LB, 60, 1)  // ❌
+```
+
+**正确写法：**
+```
+SetData(1, "local", LB, 60, 1)  // ✅
+```
+
+---
 
 ### 错误 1：编译失败 - "Syntax Error"
 **可能原因：**
